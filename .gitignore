@@ -1,0 +1,14 @@
+# Rust
+**/target/
+**/Cargo.lock
+**/*.rs.bk
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build outputs
+*.exe
+*.dll
+*.so
+*.dylib
