@@ -35,22 +35,20 @@ fn main() {
     );
 
     println!("\ncaroline replaced kyle");
+
     employees[3] = "caroline";
 
     println!("employees are: {:?}", employees);
 
     employee_of_the_month = (months[1], employees[1], ratings[2]);
-
     let (x, y, z) = employee_of_the_month;
     println!("\nin {x}, {y} was the employee of the month with a rating of {z}");
 
     employee_of_the_month = (months[2], employees[2], ratings[1]);
-
     let (x, y, z) = employee_of_the_month;
     println!("\nin {x}, {y} was the employee of the month with a rating of {z}");
 
     employee_of_the_month = (months[3], employees[3], ratings[0]);
-
     let (x, y, z) = employee_of_the_month;
     println!("\nin {x}, {y} was the employee of the month with a rating of {z}");
 }

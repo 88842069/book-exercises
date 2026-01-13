@@ -1,88 +1,59 @@
-use std::io;
-
 fn main() {
-    let mut friends: Vec<String> = Vec::new();
+    //empty vector must have a type
+    let mut v: Vec<i32> = Vec::new();
 
-    friends = init_list();
-    println!("you're friends with {:?}", friends);
-    println!("1. update\n2. quit");
+    //otherwise vectors infer types at the time of assignment
+    let mut v1 = vec!["john", "jack", "jacob"];
 
-    let mut choice = String::new();
+    v1.push("jill");
+    v.push(2);
 
-    io::stdin()
-        .read_line(&mut choice)
-        .expect("failed to read line!");
+    println!("{:?}, {:?}", v, v1);
 
-    let choice: u32 = match choice.trim().parse() {
-        Ok(num) => num,
-        Err(_) => {
-            todo!();
-        }
-    };
+    //reading from a vector
+    //using get and a simple reference
+    let fetch = &v[0];
+    let fetch1 = v1.get(2);
 
-    if choice == 1 {
-        update_list(&mut friends);
-        println!("updated friends list {:?}", friends);
-    } else {
-        return;
-    }
-}
+    println!("{:?}, {:?}", fetch, fetch1);
 
-fn update_list(friends: &mut Vec<String>) {
-    println!("\t...your friends as of now are: {:?}", friends);
-    println!("...which one would you like to update?");
-
-    let mut index = String::new();
-
-    io::stdin()
-        .read_line(&mut index)
-        .expect("failed to read line!");
-
-    let index: usize = match index.trim().parse() {
-        Ok(num) => num,
-        Err(_) => {
-            todo!();
-        }
-    };
-
-    println!("...and you would like to replace them with: ");
-    let mut to_update_with = String::new();
-
-    io::stdin()
-        .read_line(&mut to_update_with)
-        .expect("failed to read line!");
-
-    friends[index - 1] = to_update_with;
-}
-
-fn init_list() -> Vec<String> {
-    println!("how many friends do you have?");
-
-    let mut friend_count = String::new();
-
-    io::stdin()
-        .read_line(&mut friend_count)
-        .expect("failed to read line!");
-
-    let friend_count: u32 = match friend_count.trim().parse() {
-        Ok(num) => num,
-        Err(_) => {
-            todo!();
-        }
-    };
-
-    let mut names = Vec::new();
-
-    for i in 0..friend_count {
-        println!("\tenter name of friend {}", i + 1);
-
-        let mut name = String::new();
-        io::stdin()
-            .read_line(&mut name)
-            .expect("failed to read line!");
-
-        names.push(name);
+    //interating over vector values
+    for i in &v1 {
+        println!("\t{i}");
     }
 
-    names
+    let mut v2 = vec![10, 20, 30];
+    let v2 = add_ten(&mut v2).clone();
+    println!("{:?}", v2);
+
+    using_enums();
+}
+
+fn add_ten(vec: &mut Vec<i32>) -> &Vec<i32> {
+    for i in &mut *vec {
+        *i += 10;
+    }
+    vec
+}
+
+#[derive(Debug)]
+enum Groups {
+    Cities(String),
+    NumericCodes(i32),
+}
+
+fn using_enums() {
+    let japan = vec![
+        Groups::Cities(String::from("Tokyo")),
+        Groups::NumericCodes(1),
+    ];
+
+    let china = vec![
+        Groups::Cities(String::from("Beijing")),
+        Groups::NumericCodes(2),
+    ];
+
+    let places = vec![japan, china];
+
+    println!("{:?}", places);
 }

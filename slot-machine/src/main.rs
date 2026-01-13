@@ -13,35 +13,39 @@ fn main() {
     print_rules();
     let tries = manage_balance(load_money());
 
-    let mut total_payout: u32 = 0;
+    if tries == 0 {
+        return;
+    } else {
+        let mut total_payout: u32 = 0;
 
-    for _ in 0..tries {
-        let outcome: SpinResult = spin();
+        for _ in 0..tries {
+            let outcome: SpinResult = spin();
 
-        match outcome {
-            SpinResult::Ace(num) => {
-                println!("\tAce! +${num}");
-                total_payout += num;
-            }
-            SpinResult::King(num) => {
-                println!("\tKing! +${num}");
-                total_payout += num;
-            }
-            SpinResult::Queen(num) => {
-                println!("\tQueen! +${num}");
-                total_payout += num;
-            }
-            SpinResult::Jack(num) => {
-                println!("\tJack! +${num}");
-                total_payout += num;
-            }
-            SpinResult::Joker(num) => {
-                println!("\tJoker! +${num}");
-                total_payout += num;
+            match outcome {
+                SpinResult::Ace(num) => {
+                    println!("\tAce! +${num}");
+                    total_payout += num;
+                }
+                SpinResult::King(num) => {
+                    println!("\tKing! +${num}");
+                    total_payout += num;
+                }
+                SpinResult::Queen(num) => {
+                    println!("\tQueen! +${num}");
+                    total_payout += num;
+                }
+                SpinResult::Jack(num) => {
+                    println!("\tJack! +${num}");
+                    total_payout += num;
+                }
+                SpinResult::Joker(num) => {
+                    println!("\tJoker! +${num}");
+                    total_payout += num;
+                }
             }
         }
+        println!("\nyou walk away with ${total_payout}");
     }
-    println!("\nyou walk away with ${total_payout}");
 }
 
 fn spin() -> SpinResult {

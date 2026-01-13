@@ -56,6 +56,7 @@ fn main() {
 
     print_result(&result);
 }
+
 fn compare(r1: &Rectangle, r2: &Rectangle, r3: &Rectangle) -> [bool; 6] {
     let mut result: [bool; 6] = [false; 6];
 
