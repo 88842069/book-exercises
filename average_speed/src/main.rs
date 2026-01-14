@@ -39,42 +39,18 @@ fn main() {
     println!("\nDEBUG: updating their values...");
     println!("\tvalues before updating:\n\t{runners:?}");
 
-    // can be improved using hash maps
-    let val = vec![4, 10, 8, 9];
-    let names = ["Jill", "Jack", "Jane", "Joe"];
+    // updating values using another hash map
+    let mut new_values = HashMap::new();
 
-    let mut count = 0;
+    new_values.entry(jane.clone()).or_insert(8);
+    new_values.entry(jill.clone()).or_insert(4);
+    new_values.entry(jack.clone()).or_insert(10);
+    new_values.entry(joe.clone()).or_insert(9);
 
-    for n in names {
-        let tmp = n.to_string();
-        let updater = runners.entry(tmp.clone()).or_insert(0);
-        *updater += val[count];
-        *updater /= 2;
-        count += 1;
+    for (key, val) in new_values.iter() {
+        let updater = runners.entry(key.clone()).or_insert(0);
+        *updater = (*updater + val) / 2;
     }
 
     println!("\n\tvalues after updating:\n\t{runners:?}");
 }
-
-/* figuring out how to update values
-
-println!("Jill's average before: {:?}", runners.get(&jill).unwrap());
-
-let curr_value = runners.get(&jill).unwrap();
-println!("\t{curr_value}");
-
-let new_value = 4;
-println!("\t{new_value}");
-
-let final_value = (curr_value + new_value) / 2;
-println!("\t{final_value}");
-
-runners.insert(jill.clone(), final_value);
-
-let updater = runners.entry(jill.clone()).or_insert(0);
-*updater += new_value;
-*updater /= 2;
-
-println!("Jill's average after: {:?}", runners.get(&jill).unwrap());
-
-*/
