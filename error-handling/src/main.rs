@@ -2,38 +2,83 @@ use std::fs::{self, File};
 use std::io::{self, Read};
 
 fn main() {
-    let username = get_username_or_create_file().unwrap();
-    if username == "" {
-        println!("empty!");
-    } else {
-        println!("{:?}", username);
+    // read file or create it if it doesnt exist
+    match read_or_create_usernames_file() {
+        Ok(_) => (),
+        Err(e) => {
+            println!("could not read or create file! {e:?}");
+            return;
+        }
     }
+
+    // print users
+    let usernames = get_or_set_usernames();
+
+    println!("printing usernames:\n{usernames:?}");
 }
 
-fn get_username_or_create_file() -> Result<String, io::Error> {
-    let check_username_file = File::open("username.txt");
+fn get_or_set_usernames() -> String {
+    let usernames_file = File::open("usernames.txt");
+    let mut usernames = String::new();
 
-    let mut username_file = match check_username_file {
-        Ok(filename) => filename,
-        Err(e) => match e.kind() {
-            std::io::ErrorKind::NotFound => match File::create("username.txt") {
-                Ok(file_created) => {
-                    println!("created file, now writing...");
-                    fs::write("{file_created}", "admin");
-                    file_created
+    match usernames_file.unwrap().read_to_string(&mut usernames) {
+        Ok(_) => (),
+        Err(e) => return format!("could not read from file!\n{e:?}").to_string(),
+    }
+
+    if !usernames.is_empty() {
+        return usernames;
+    } else {
+        println!("file is empty! adding the admin user");
+        let add_first_user = fs::write("usernames.txt", "admin");
+        match add_first_user {
+            Ok(_) => {
+                println!("added admin");
+            }
+
+            Err(e) => {
+                println!(
+                    "could not add the admin user
+                    error: {e:?}"
+                );
+                return format!(
+                    "file is empty and we could not add the admin user
+                    {e:?}"
+                )
+                .to_string();
+            }
+        }
+    }
+
+    let usernames_file = File::open("usernames.txt");
+    let mut usernames = String::new();
+
+    match usernames_file.unwrap().read_to_string(&mut usernames) {
+        Ok(_) => (),
+        Err(e) => return format!("could not read from file after adding admin\n{e:?}").to_string(),
+    }
+    usernames
+}
+
+fn read_or_create_usernames_file() -> Result<File, io::Error> {
+    let file_exists = File::open("usernames.txt");
+
+    match file_exists {
+        Ok(filename) => return Ok(filename),
+        Err(e) => {
+            println!("file does not exist!\n{e:?}\ncreating usernames.txt");
+
+            let create_file = File::create("usernames.txt");
+
+            match create_file {
+                Ok(filename) => {
+                    println!("created file: {filename:?}");
+                    return Ok(filename);
                 }
-                Err(error_creating_file) => {
-                    panic!("error creating file! {error_creating_file:?}")
+                Err(e) => {
+                    return Err(e);
                 }
-            },
-            _ => panic!("cant open file!"),
-        },
-    };
-
-    let mut username = String::new();
-
-    match username_file.read_to_string(&mut username) {
-        Ok(_) => Ok(username),
-        Err(e) => Err(e),
+            }
+        }
     }
 }
