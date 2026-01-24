@@ -2,11 +2,10 @@
 // if someone has a favorite colour they get that
 // else they get whatever colour we currently have the most of
 
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Ord, PartialOrd)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 enum ShirtColor {
     Red,
     Blue,
-    Green,
 }
 
 #[derive(Debug)]
@@ -14,149 +13,51 @@ struct Inventory {
     shirts: Vec<ShirtColor>,
 }
 
-#[derive(Debug)]
-struct User {
-    shirt_preference: Option<ShirtColor>,
-}
+// #[derive(Debug)]
+// struct User {
+//     shirt_preference: Option<ShirtColor>,
+// }
 
 impl Inventory {
-    fn giveaway(current_inventory: &mut Self, user: &User) -> ShirtColor {
-        let pref = user.shirt_preference;
-        if pref == None {
-            let current_max = Self::current_max(current_inventory);
-            Self::update_inventory(current_inventory, current_max);
-            return current_max;
-        } else {
-            Self::update_inventory(current_inventory, pref.unwrap());
-            return pref.unwrap();
-        }
+    fn giveaway(&self, user_pref: Option<ShirtColor>) -> ShirtColor {
+        user_pref.unwrap_or_else(|| self.current_max())
     }
 
-    fn update_inventory(current_inventory: &mut Self, current_max: ShirtColor) {
-        let mut temp_inventory = current_inventory.shirts.clone();
-        temp_inventory.sort();
-
-        let mut i = 0;
-        for color in temp_inventory {
-            if color == current_max {
-                current_inventory.shirts.swap_remove(i);
-                return;
-            }
-            i += 1;
-        }
-    }
-
-    fn current_max(current_inventory: &mut Self) -> ShirtColor {
-        let mut green = 0;
-        let mut blue = 0;
+    fn current_max(&self) -> ShirtColor {
         let mut red = 0;
-
-        let tmp_inventory = current_inventory.shirts.clone();
-        for color in tmp_inventory {
+        let mut blue = 0;
+        for color in &self.shirts {
             match color {
                 ShirtColor::Red => red += 1,
                 ShirtColor::Blue => blue += 1,
-                ShirtColor::Green => green += 1,
             }
         }
-
-        if blue > green && blue > red {
-            return ShirtColor::Blue;
-        };
-
-        if green > blue && green > red {
-            return ShirtColor::Green;
-        };
-
-        if red > blue && red > green {
+        if red > blue {
             return ShirtColor::Red;
-        };
-
-        if blue == red && blue == green {
-            return ShirtColor::Blue;
-        };
-
-        if blue == red && blue < green {
-            return ShirtColor::Green;
-        };
-
-        if blue == red && blue > green {
-            return ShirtColor::Blue;
-        };
-
-        if green == blue && green > red {
-            return ShirtColor::Blue;
-        };
-
-        if green == blue && green < red {
-            return ShirtColor::Red;
-        };
-
-        if red == green && green > blue {
-            return ShirtColor::Green;
-        };
-
-        if red == green && green < blue {
-            return ShirtColor::Blue;
         } else {
-            return ShirtColor::Green;
+            return ShirtColor::Blue;
         }
     }
 }
 
 fn main() {
-    let mut current_inventory = Inventory {
+    let current_inventory = Inventory {
         shirts: vec![
             ShirtColor::Red,
             ShirtColor::Red,
-            ShirtColor::Green,
-            ShirtColor::Green,
-            ShirtColor::Green,
-            ShirtColor::Blue,
             ShirtColor::Blue,
             ShirtColor::Blue,
             ShirtColor::Blue,
         ],
     };
 
-    let user_red = User {
-        shirt_preference: Some(ShirtColor::Red),
-    };
-    let user_green = User {
-        shirt_preference: Some(ShirtColor::Green),
-    };
-    let user_none = User {
-        shirt_preference: None,
-    };
-
     println!("DEBUG: inventory: {:?}", current_inventory);
-    println!("--------------------");
 
-    println!(
-        "DEBUG: giveaway {:?} to {:?}",
-        Inventory::giveaway(&mut current_inventory, &user_red),
-        user_red
-    );
+    let user_red = Some(ShirtColor::Red);
+    let giveaway1 = current_inventory.giveaway(user_red);
+    println!("DEBUG: giveaway {:?} to {:?}", giveaway1, user_red);
 
-    println!("DEBUG: current inventory: {:?}", current_inventory);
-
-    println!("--------------------");
-
-    println!(
-        "DEBUG: giveaway {:?} to {:?}",
-        Inventory::giveaway(&mut current_inventory, &user_green),
-        user_green
-    );
-
-    println!("DEBUG: current inventory: {:?}", current_inventory);
-    println!("--------------------");
-
-    println!(
-        "DEBUG: giveaway {:?} to {:?}",
-        Inventory::giveaway(&mut current_inventory, &user_none),
-        user_none
-    );
-
-    println!("DEBUG: current inventory: {:?}", current_inventory);
-    println!("--------------------");
+    let user_none = None;
+    let giveaway2 = current_inventory.giveaway(user_none);
+    println!("DEBUG: giveaway {:?} to {:?}", giveaway2, user_none);
 }
